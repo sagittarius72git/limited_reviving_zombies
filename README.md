@@ -1,4 +1,4 @@
-# Limited Zombie Revival
+# Limited_Reviving_Zombies
 
 A mod inspired by `No_Reviving` (which bans revival entirely) that **limits revival instead of banning it**.
 Zombies still get back up as before, but they come back weaker and slower depending on how damaged the corpse is, and they can't keep rising again and again.
