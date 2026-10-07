@@ -24,6 +24,8 @@
 
   数値はすべて下の mod.cfg で変更できる。変更後は
   デバッグメニューの「Reload Lua Code」で即反映される。
+
+  Assisted-by: Claude:claude-opus-5-5
 ]]
 
 gdebug.log_info("LRZ: main.")

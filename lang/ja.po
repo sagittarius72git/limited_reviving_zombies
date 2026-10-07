@@ -1,4 +1,5 @@
 # Japanese translation for the "Limited Zombie Revival" mod.
+# Assisted-by: Claude:claude-opus-5-5
 msgid ""
 msgstr ""
 "Project-Id-Version: limited_reviving_zombies\n"

@@ -5,6 +5,8 @@
   game.add_hook はこの時点で呼ぶ必要があるが、実体は呼び出し時に
   mod テーブルから取り出されるので、main.lua を書き換えて
   「Reload Lua Code」するだけで挙動を差し替えられる。
+
+  Assisted-by: Claude:claude-opus-5-5
 ]]
 
 gdebug.log_info("LRZ: preload.")
