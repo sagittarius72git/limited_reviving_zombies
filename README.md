@@ -13,7 +13,7 @@ This mod (including its documentation) was made largely with the help of Claude 
 - Rigor mortis (`lrz_rigor`): their speed drops for a while.
 - One revival only: kill a revived zombie and its corpse never rises again.
 
-| Corpse damage | HP cap | Helpless time | Rigor mortis | Speed penalty |
+| Corpse damage | HP cap | Weak time | Rigor mortis | Speed penalty |
 |---|---|---|---|---|
 | 0 (undamaged) | 65% | 5 seconds | 2 minutes | -10 |
 | 1 | 50% | 12 seconds | 5 minutes | -20 |
