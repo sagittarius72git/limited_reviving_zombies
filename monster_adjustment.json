@@ -1,0 +1,9 @@
+[
+  {
+    "//": "Nobody rises at full HP/speed: turn off REVIVES_HEALTHY for the ZOMBIE species. 万全の状態で起き上がるゾンビを無くす。",
+    "//2": "Assisted-by: Claude:claude-opus-5-5",
+    "type": "monster_adjustment",
+    "species": "ZOMBIE",
+    "flag": { "name": "REVIVES_HEALTHY", "value": false }
+  }
+]

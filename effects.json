@@ -1,5 +1,7 @@
 [
   {
+    "//": "Rigor mortis: -10 speed per intensity (intensity = corpse damage + 1). 死後硬直：強度1段階につき速度 -10。",
+    "//2": "Assisted-by: Claude:claude-opus-5-5",
     "type": "effect_type",
     "id": "lrz_rigor",
     "name": [ "Rigor Mortis" ],

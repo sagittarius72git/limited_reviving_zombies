@@ -1,0 +1,146 @@
+[
+  {
+    "//": "Limited Zombie Revival - CDDA 0.I-1 port. CDDA has no Lua, so the BN Lua hooks are rebuilt with EOCs. CDDA には Lua が無いので、BN 版の Lua フックを EOC で作り直した。",
+    "//2": "Settings: the jmath_function entries below. Index = corpse damage 0 (intact) .. 3 (mangled). 設定は下の jmath_function。添字は死体の損壊度 0(無傷)〜3(ボロボロ)。",
+    "//3": "Assisted-by: Claude:claude-opus-5-5",
+    "type": "jmath_function",
+    "id": "lrz_max_revivals",
+    "num_args": 0,
+    "//4": "Times one corpse may rise: 1 = once, 0 = never. Only 0 or 1 works in CDDA. 同じ死体が起き上がれる回数（0 か 1）。",
+    "return": "1"
+  },
+  {
+    "type": "jmath_function",
+    "id": "lrz_hp_ratio",
+    "num_args": 1,
+    "//": "HP cap on revival (share of max HP). Only lowers HP. 復活時HPの上限（最大HPに対する割合）。下げる方向にしか働かない。",
+    "return": "_0 <= 0 ? 0.65 : (_0 == 1 ? 0.50 : (_0 == 2 ? 0.35 : 0.25))"
+  },
+  {
+    "type": "jmath_function",
+    "id": "lrz_rise_secs",
+    "num_args": 1,
+    "//": "Seconds spent downed + stunned after rising. 起き上がった直後に無力（転倒＋朦朧）になる秒数。",
+    "return": "_0 <= 0 ? 5 : (_0 == 1 ? 12 : (_0 == 2 ? 20 : 30))"
+  },
+  {
+    "type": "jmath_function",
+    "id": "lrz_rigor_mins",
+    "num_args": 1,
+    "//": "Minutes of rigor mortis (lrz_rigor). 死後硬直の持続時間（分）。",
+    "return": "_0 <= 0 ? 2 : (_0 == 1 ? 5 : (_0 == 2 ? 8 : 12))"
+  },
+  {
+    "type": "jmath_function",
+    "id": "lrz_guess_damage",
+    "num_args": 1,
+    "//": "Corpse damage level guessed from HP share on revival (game gives 0.7 / (damage + 1), minus burns). 復活直後のHP割合から死体の損壊度を推定する。",
+    "return": "3 - (_0 >= 0.2) - (_0 >= 0.29) - (_0 >= 0.5)"
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "lrz_scan_monsters",
+    "//": "Every second, look at zombies we have not seen yet. A revived one has at most 70% HP (game rule once REVIVES_HEALTHY is off); new spawns have full HP. 毎秒、未確認のゾンビを調べる。復活した個体はHPが最大の70%以下（REVIVES_HEALTHY 無効時の本体の仕様）、新しく出現した個体は満タン。",
+    "eoc_type": "RECURRING",
+    "recurrence": 1,
+    "global": true,
+    "effect": [ { "u_run_monster_eocs": [ "lrz_check_monster" ] } ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "lrz_check_monster",
+    "//": "u = the monster. lrz_gen: 0 = normal spawn, 1 = revived. u = モンスター。lrz_gen は 0=通常の出現、1=復活した個体。",
+    "condition": {
+      "and": [ { "math": [ "value_or(u_lrz_gen, -1) < 0" ] }, { "u_has_species": "ZOMBIE" }, { "u_has_flag": "REVIVES" } ]
+    },
+    "effect": [
+      {
+        "if": {
+          "and": [
+            { "math": [ "u_hp('ALL') <= u_hp_max('torso') * 0.7" ] },
+            { "not": { "u_has_effect": "pet" } },
+            { "not": { "u_has_effect": "pacified" } }
+          ]
+        },
+        "then": [ { "run_eocs": "lrz_weaken_revived" } ],
+        "else": [ { "math": [ "u_lrz_gen = 0" ] } ]
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "lrz_weaken_revived",
+    "//": "Weaken a zombie that just rose from its corpse. 死体から起き上がったばかりのゾンビを弱らせる。",
+    "effect": [
+      { "math": [ "_lrz_dl = lrz_guess_damage(u_hp('ALL') / max(u_hp_max('torso'), 1))" ] },
+      { "//": "1) cap HP / HPの上限", "math": [ "u_hp('ALL') = min(u_hp('ALL'), max(1, floor(u_hp_max('torso') * lrz_hp_ratio(_lrz_dl))))" ] },
+      { "//": "2) helpless for a while / しばらく無力", "u_add_effect": "downed", "duration": { "math": [ "lrz_rise_secs(_lrz_dl)" ] } },
+      { "u_add_effect": "stunned", "duration": { "math": [ "lrz_rise_secs(_lrz_dl)" ] } },
+      {
+        "//": "3) rigor mortis / 死後硬直",
+        "u_add_effect": "lrz_rigor",
+        "duration": { "math": [ "lrz_rigor_mins(_lrz_dl) * 60" ] },
+        "intensity": { "math": [ "_lrz_dl + 1" ] }
+      },
+      { "//": "4) remember it rose once / 復活済みの印", "math": [ "u_lrz_gen = 1" ] }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "lrz_on_monster_dies",
+    "//": "A revived zombie died: tag the corpses already on its tile, then seal the new one a second later (the corpse does not exist yet). 復活した個体が倒れた。足元の既存の死体に印を付け、1秒後に新しい死体を封じる（この時点では死体がまだ無い）。",
+    "eoc_type": "EVENT",
+    "required_event": "monster_takes_damage",
+    "condition": {
+      "and": [
+        "u_is_monster",
+        { "math": [ "_dies == 1" ] },
+        { "u_has_species": "ZOMBIE" },
+        { "u_has_flag": "REVIVES" },
+        { "math": [ "value_or(u_lrz_gen, 0) >= lrz_max_revivals()" ] }
+      ]
+    },
+    "effect": [
+      { "u_location_variable": { "context_val": "lrz_loc" } },
+      { "set_string_var": "<u_name>", "target_var": { "context_val": "lrz_name" }, "parse_tags": true },
+      { "math": [ "_lrz_tok = time('now')" ] },
+      {
+        "u_map_run_item_eocs": "all",
+        "loc": { "context_val": "lrz_loc" },
+        "max_radius": 0,
+        "search_data": [ { "id": "corpse" } ],
+        "true_eocs": [ { "id": "lrz_tag_old_corpse", "effect": [ { "math": [ "n_lrz_tok = _lrz_tok" ] } ] } ]
+      },
+      { "run_eocs": "lrz_seal_corpse", "time_in_future": 1 }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "lrz_seal_corpse",
+    "//": "PULPED is what the game puts on smashed corpses; item::can_revive() refuses it. PULPED は本体が「潰した死体」に付ける印で、can_revive() がこれを弾く。",
+    "global": true,
+    "effect": [
+      {
+        "u_map_run_item_eocs": "all",
+        "loc": { "context_val": "lrz_loc" },
+        "max_radius": 0,
+        "search_data": [ { "id": "corpse" } ],
+        "true_eocs": [
+          {
+            "id": "lrz_seal_one_corpse",
+            "condition": {
+              "and": [ { "math": [ "value_or(n_lrz_tok, -1) != _lrz_tok" ] }, { "not": { "npc_has_flag": "PULPED" } } ]
+            },
+            "effect": [
+              { "npc_set_flag": "PULPED" },
+              {
+                "if": { "u_can_see_location": { "context_val": "lrz_loc" } },
+                "then": [ { "u_message": "The <context_val:lrz_name> is too broken to rise again.", "type": "good" } ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

@@ -1,4 +1,5 @@
-# Japanese translation for the "Limited Zombie Revival" mod.
+# Japanese translation for the "Limited_Reviving_Zombies" mod (CDDA 0.I-1).
+# Compiled to lang/mo/ja/LC_MESSAGES/limited_reviving_zombies.mo
 # Assisted-by: Claude:claude-opus-5-5
 msgid ""
 msgstr ""
@@ -9,7 +10,7 @@ msgstr ""
 "Language: ja\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-msgid "Limited Zombie Revival"
+msgid "Limited_Reviving_Zombies"
 msgstr "制限付きゾンビ復活"
 
 msgid ""
@@ -31,5 +32,5 @@ msgid ""
 "own body."
 msgstr "死によって四肢が硬直している。一歩ごとに自分の体と格闘している。"
 
-msgid "The %s is too broken to rise again."
-msgstr "%sは壊れすぎていて、もう起き上がれない。"
+msgid "The <context_val:lrz_name> is too broken to rise again."
+msgstr "<context_val:lrz_name>は壊れすぎていて、もう起き上がれない。"
