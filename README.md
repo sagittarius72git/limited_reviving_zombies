@@ -8,17 +8,17 @@ This mod (including its documentation) was made largely with the help of Claude 
 ## What it changes
 
 - Disables `REVIVES_HEALTHY`: no zombie rises at full strength anymore.
-- Caps HP on revival: if the game's own result is lower, that wins, so this only ever makes them weaker.
+- HP on revival: the base game revives them at 70% of max HP ÷ (corpse damage + 1). This mod lowers undamaged corpses to 65%.
 - Downed and stunned right after rising: time to smash their head.
 - Rigor mortis (`lrz_rigor`): their speed drops for a while.
 - One revival only: kill a revived zombie and its corpse never rises again.
 
-| Corpse damage | HP cap | Helpless time | Rigor mortis | Speed penalty |
+| Corpse damage | HP on revival | Helpless time | Rigor mortis | Speed penalty |
 |---|---|---|---|---|
 | 0 (undamaged) | 65% | 5 seconds | 2 minutes | -10 |
-| 1 | 50% | 12 seconds | 5 minutes | -20 |
-| 2 | 35% | 20 seconds | 8 minutes | -30 |
-| 3 (mangled) | 25% | 30 seconds | 12 minutes | -40 |
+| 1 | 35% | 12 seconds | 5 minutes | -20 |
+| 2 | ~23% | 20 seconds | 8 minutes | -30 |
+| 3 (mangled) | 17.5% | 30 seconds | 12 minutes | -40 |
 
 The time until revival (about 6–24 hours) is unchanged from the base game.
 
